@@ -3,6 +3,10 @@
 // Definitions by: Fred Chasen <https://github.com/fchasen>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
+export default class ePub {
+  constructor(url: any, options: any);
+}
+
 export class Book {
     constructor(url: any, options: any);
 
