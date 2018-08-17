@@ -3,1713 +3,444 @@
 // Definitions by: Fred Chasen <https://github.com/fchasen>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-export default class ePub {
-  constructor(url: any, options: any);
+interface BookOptions {
+  requestMethod?: (url: string, type: string, withCredentials: object, headers: object) => Promise<object>;
+  requestCredentials?: object,
+  requestHeaders?: object,
+  encoding?: string,
+  replacements?: string,
+  canonical?: (path: string) => string,
+  openAs?: string
 }
+
+interface RenditionOptions {
+  width?: number,
+  height?: number,
+  ignoreClass?: string,
+  manager?: string | Function | object,
+  view?: string | Function | object,
+  layout?: string,
+  spread?: string,
+  minSpreadWidth?: number,
+  stylesheet?: string,
+  script?: string
+}
+
+interface Location {
+
+}
+
+interface DisplayedLocation {
+  index: number,
+  href: string,
+  cfi: string,
+  displayed: {
+    page: number,
+    total: number
+  }
+}
+
+interface DisplayedLocationRange {
+  start: DisplayedLocation,
+	end: DisplayedLocation
+}
+
+interface ViewportSettings {
+  width: string,
+  height: string,
+  scale: string,
+  scalable: string,
+  minimum: string,
+  maximum: string
+}
+
+interface EpubCFISegment {
+  steps: Array<object>,
+  terminal: {
+    offset: number,
+    assertion: string
+  }
+}
+
+interface EpubCFIStep {
+	id: string,
+	tagName: string,
+	type: number,
+	index: number
+}
+
+export as namespace ePub;
+
+export default function ePub(url: string, options?: BookOptions) : Book;
+
+export default function ePub(options?: BookOptions) : Book;
 
 export class Book {
-    constructor(url: any, options: any);
+    constructor(url: string, options?: BookOptions);
+    constructor(options?: BookOptions);
 
-    canonical(path: any): any;
+    canonical(path: string): string;
 
-    coverUrl(): any;
-
-    destroy(): void;
-
-    determineType(input: any): any;
-
-    emit(type: any, ...args: any[]): void;
-
-    getRange(cfiRange: any): any;
-
-    key(identifier: any): any;
-
-    load(path: any): any;
-
-    loadNavigation(opf: any): any;
-
-    off(type: any, listener: any): any;
-
-    on(type: any, listener: any): any;
-
-    once(type: any, listener: any, ...args: any[]): any;
-
-    open(input: any, what: any): any;
-
-    openContainer(url: any): any;
-
-    openEpub(data: any, encoding: any): any;
-
-    openManifest(url: any): any;
-
-    openPackaging(url: any): any;
-
-    renderTo(element: any, options: any): any;
-
-    replacements(): any;
-
-    resolve(path: any, absolute: any): any;
-
-    section(target: any): any;
-
-    setRequestCredentials(credentials: any): void;
-
-    setRequestHeaders(headers: any): void;
-
-    unarchive(input: any, encoding: any): any;
-
-    unpack(opf: any): void;
-
-}
-
-export class Contents {
-    constructor(doc: any, content: any, cfiBase: any, sectionIndex: any);
-
-    addClass(className: any): void;
-
-    addEventListeners(): void;
-
-    addScript(src: any): any;
-
-    addSelectionListeners(): void;
-
-    addStylesheet(src: any): any;
-
-    addStylesheetRules(rules: any): any;
-
-    cfiFromNode(node: any, ignoreClass: any): any;
-
-    cfiFromRange(range: any, ignoreClass: any): any;
-
-    columns(width: any, height: any, columnWidth: any, gap: any): void;
-
-    contentHeight(h: any): any;
-
-    contentWidth(w: any): any;
-
-    css(property: any, value: any, priority: any): any;
+    coverUrl(): string;
 
     destroy(): void;
 
-    direction(dir: any): void;
+    determineType(input: string): string;
 
+    getRange(cfiRange: string): Range;
+
+    key(identifier: string): string;
+
+    load(path: string): Promise<object>;
+
+    loadNavigation(opf: XMLDocument): Promise<Navigation>;
+
+    open(input: string, what?: string): Promise<object>;
+    open(input: ArrayBuffer, what?: string): Promise<object>;
+
+    openContainer(url: string): Promise<string>;
+
+    openEpub(data: BinaryType, encoding?: string): Promise<Book>;
+
+    openManifest(url: string): Promise<Book>;
+
+    openPackaging(url: string): Promise<Book>;
+
+    renderTo(element: Element, options?: RenditionOptions): Rendition;
+    renderTo(element: string, options?: RenditionOptions): Rendition;
+
+    private replacements(): Promise<void>;
+
+    resolve(path: string, absolute?: boolean): string;
+
+    section(target: string): Section;
+    section(target: int): Section;
+
+    setRequestCredentials(credentials: object): void;
+
+    setRequestHeaders(headers: object): void;
+
+    unarchive(input: BinaryType, encoding?: string): Promise<Archive>;
+
+    unpack(opf: XMLDocument): Promise<Book>;
+
+    // Event emitters
     emit(type: any, ...args: any[]): void;
-
-    epubReadingSystem(name: any, version: any): any;
-
-    expand(): void;
-
-    fit(width: any, height: any): void;
-
-    fontLoadListeners(target: any): void;
-
-    height(h: any): any;
-
-    imageLoadListeners(target: any): void;
-
-    layoutStyle(style: any): any;
-
-    linksHandler(): void;
-
-    listeners(): void;
-
-    locationOf(target: any, ignoreClass: any): any;
-
-    map(layout: any): any;
-
-    mapPage(cfiBase: any, layout: any, start: any, end: any, dev: any): any;
-
-    mediaQueryListeners(): void;
-
-    off(type: any, listener: any): any;
-
-    on(type: any, listener: any): any;
-
-    onSelectionChange(e: any): void;
-
-    once(type: any, listener: any, ...args: any[]): any;
-
-    overflow(_overflow: any): any;
-
-    overflowX(overflow: any): any;
-
-    overflowY(overflow: any): any;
-
-    range(_cfi: any, ignoreClass: any): any;
-
-    removeClass(className: any): void;
-
-    removeEventListeners(): void;
-
-    removeListeners(): void;
-
-    removeSelectionListeners(): void;
-
-    resizeCheck(): void;
-
-    resizeListeners(): void;
-
-    resizeObservers(): void;
-
-    root(): any;
-
-    scaler(scale: any, offsetX: any, offsetY: any): void;
-
-    scrollHeight(): any;
-
-    scrollWidth(): any;
-
-    size(width: any, height: any): void;
-
-    textHeight(): any;
-
-    textWidth(): any;
-
-    transitionListeners(): void;
-
-    triggerEvent(e: any): void;
-
-    triggerSelectedEvent(selection: any): void;
-
-    viewport(options: any): any;
-
-    width(w: any): any;
-
-    writingMode(mode: any): any;
-
-    static listenedEvents: string[];
-
-}
-
-export class EpubCFI {
-    constructor(cfiFrom: any, base: any, ignoreClass: any);
-
-    checkType(cfi: any): any;
-
-    collapse(toStart: any): void;
-
-    compare(cfiOne: any, cfiTwo: any): any;
-
-    equalStep(stepA: any, stepB: any): any;
-
-    filter(anchor: any, ignoreClass: any): any;
-
-    filteredPosition(anchor: any, ignoreClass: any): any;
-
-    filteredStep(node: any, ignoreClass: any): any;
-
-    findNode(steps: any, _doc: any, ignoreClass: any): any;
-
-    fixMiss(steps: any, offset: any, _doc: any, ignoreClass: any): any;
-
-    fromNode(anchor: any, base: any, ignoreClass: any): any;
-
-    fromRange(range: any, base: any, ignoreClass: any): any;
-
-    generateChapterComponent(_spineNodeIndex: any, _pos: any, id: any): any;
-
-    getChapterComponent(cfiStr: any): any;
-
-    getCharecterOffsetComponent(cfiStr: any): any;
-
-    getPathComponent(cfiStr: any): any;
-
-    getRange(cfiStr: any): any;
-
-    isCfiString(str: any): any;
-
-    joinSteps(steps: any): any;
-
-    normalizedMap(children: any, nodeType: any, ignoreClass: any): any;
-
-    parse(cfiStr: any): any;
-
-    parseComponent(componentStr: any): any;
-
-    parseStep(stepStr: any): any;
-
-    parseTerminal(termialStr: any): any;
-
-    patchOffset(anchor: any, offset: any, ignoreClass: any): any;
-
-    pathTo(node: any, offset: any, ignoreClass: any): any;
-
-    position(anchor: any): any;
-
-    segmentString(segment: any): any;
-
-    step(node: any): any;
-
-    stepsToQuerySelector(steps: any): any;
-
-    stepsToXpath(steps: any): any;
-
-    textNodes(container: any, ignoreClass: any): any;
-
-    toRange(_doc: any, ignoreClass: any): any;
-
-    toString(): any;
-
-    walkToNode(steps: any, _doc: any, ignoreClass: any): any;
-
-}
-
-export class Layout {
-    constructor(settings: any);
-
-    calculate(_width: any, _height: any, _gap: any): void;
-
-    count(totalLength: any, pageLength: any): any;
-
-    emit(type: any, ...args: any[]): void;
-
-    flow(_flow: any): any;
-
-    format(contents: any): any;
 
     off(type: any, listener: any): any;
 
     on(type: any, listener: any): any;
 
     once(type: any, listener: any, ...args: any[]): any;
-
-    spread(_spread: any, min: any): any;
-
-    update(props: any): void;
 
 }
 
 export class Rendition {
-    constructor(book: any, options: any);
+    constructor(book: Book, options: RenditionOptions);
 
-    adjustImages(contents: any): any;
+    adjustImages(contents: Contents): Promise<void>;
 
-    afterDisplayed(view: any): any;
-
-    afterRemoved(view: any): void;
-
-    attachTo(element: any): any;
+    attachTo(element: Element): Promise<void>;
 
     clear(): void;
 
-    currentLocation(): any;
+    currentLocation(): DisplayedLocation;
+    currentLocation(): Promise<DisplayedLocation>;
 
     destroy(): void;
 
-    determineLayoutProperties(metadata: any): any;
+    determineLayoutProperties(metadata: object): object;
 
-    direction(dir: any): void;
+    direction(dir: string): void;
 
-    display(target: any): any;
+    display(target?: string): Promise<void>;
+    display(target?: number): Promise<void>;
 
-    emit(type: any, ...args: any[]): void;
+    flow(flow: string): void;
 
-    flow(_flow2: any): void;
+    getContents(): Contents;
 
-    getContents(): any;
+    getRange(cfi: string, ignoreClass?: string): Range;
 
-    getRange(cfi: any, ignoreClass: any): any;
+    handleLinks(contents: Contents): void;
 
-    handleLinks(contents: any): void;
+    injectIdentifier(doc: Document, section: Section): void;
 
-    injectIdentifier(doc: any, section: any): void;
+    injectScript(doc: Document, section: Section): void;
 
-    injectScript(doc: any, section: any): void;
-
-    injectStylesheet(doc: any, section: any): void;
+    injectStylesheet(doc: Document, section: Section): void;
 
     layout(settings: any): any;
 
-    located(location: any): any;
+    located(location: Location): DisplayedLocation;
 
-    moveTo(offset: any): void;
+    moveTo(offset: number): void;
 
-    next(): any;
+    next(): Promise<void>;
+
+    onOrientationChange(orientation: string): void;
+
+    passEvents(contents: Contents): void;
+
+    prev(): Promise<void>;
+
+    reportLocation(): Promise<void>;
+
+    requireManager(manager: string | Function | object): any;
+
+    requireView(view: string | Function | object): any;
+
+    resize(width: number, height: number): void;
+
+    setManager(manager: Function): void;
+
+    spread(spread: string, min?: number): void;
+
+    start(): void;
+
+    views(): Array<View>;
+
+    // Event emitters
+    emit(type: any, ...args: any[]): void;
 
     off(type: any, listener: any): any;
 
     on(type: any, listener: any): any;
 
-    onOrientationChange(orientation: any): void;
+    once(type: any, listener: any, ...args: any[]): any;
 
-    onResized(size: any): void;
+    private triggerMarkEvent(cfiRange: string, data: object, contents: Contents): void;
+
+    private triggerSelectedEvent(cfirange: string, contents: Contents): void;
+
+    private triggerViewEvent(e: Event, contents: Contents): void;
+
+    private onResized(size: { width: number, height: number }): void;
+
+    private afterDisplayed(view: any): void;
+
+    private afterRemoved(view: any): void;
+
+}
+
+export class Contents {
+    constructor(doc: Document, content: Element, cfiBase: string, sectionIndex: number);
+
+    static listenedEvents: string[];
+
+    addClass(className: string): void;
+
+    addScript(src: string): Promise<boolean>;
+
+    addStylesheet(src: string): Promise<boolean>;
+
+    addStylesheetRules(rules: Array<object> | object): Promise<boolean>;
+
+    cfiFromNode(node: Node, ignoreClass?: string): string;
+
+    cfiFromRange(range: Range, ignoreClass?: string): string;
+
+    columns(width: number, height: number, columnWidth: number, gap: number): void;
+
+    contentHeight(h: number): number;
+
+    contentWidth(w: number): number;
+
+    css(property: string, value: string, priority?: boolean): string;
+
+    destroy(): void;
+
+    direction(dir: string): void;
+
+    fit(width: number, height: number): void;
+
+    height(h: number): number;
+
+    locationOf(target: string | EpubCFI, ignoreClass?: string): Promise<{ top: number, left: number }>;
+
+    map(layout: any): any;
+
+    mapPage(cfiBase: string, layout: object, start: number, end: number, dev: boolean): any;
+
+    overflow(overflow: string): string;
+
+    overflowX(overflow: string): string;
+
+    overflowY(overflow: string): string;
+
+    range(cfi: string, ignoreClass?: string): Range;
+
+    removeClass(className: any): void;
+
+    root(): Element;
+
+    scaler(scale: number, offsetX: number, offsetY: number): void;
+
+    scrollHeight(): number;
+
+    scrollWidth(): number;
+
+    size(width: number, height: number): void;
+
+    textHeight(): number;
+
+    textWidth(): number;
+
+    viewport(options: ViewportSettings): ViewportSettings;
+
+    width(w: number): number;
+
+    writingMode(mode: string): string;
+
+    // Event emitters
+    emit(type: any, ...args: any[]): void;
+
+    off(type: any, listener: any): any;
+
+    on(type: any, listener: any): any;
 
     once(type: any, listener: any, ...args: any[]): any;
 
-    passEvents(contents: any): any;
+    private addEventListeners(): void;
 
-    prev(): any;
+    private addSelectionListeners(): void;
 
-    reportLocation(): any;
+    private epubReadingSystem(name: string, version: string): object;
 
-    requireManager(manager: any): any;
+    private expand(): void;
 
-    requireView(view: any): any;
+    private fontLoadListeners(): void;
 
-    resize(width: any, height: any): void;
+    private imageLoadListeners(): void;
 
-    setManager(manager: any): void;
+    private layoutStyle(style: string): string;
 
-    spread(_spread: any, min: any): void;
+    private linksHandler(): void;
 
-    start(): void;
+    private listeners(): void;
 
-    triggerMarkEvent(cfiRange: any, data: any, contents: any): void;
+    private mediaQueryListeners(): void;
 
-    triggerSelectedEvent(cfirange: any, contents: any): void;
+    private onSelectionChange(e: Event): void;
 
-    triggerViewEvent(e: any, contents: any): void;
+    private removeEventListeners(): void;
 
-    views(): any;
+    private removeListeners(): void;
+
+    private removeSelectionListeners(): void;
+
+    private resizeCheck(): void;
+
+    private resizeListeners(): void;
+
+    private resizeObservers(): void;
+
+    private transitionListeners(): void;
+
+    private triggerEvent(e: Event): void;
+
+    private triggerSelectedEvent(selection: Selection): void;
+}
+
+export class EpubCFI {
+    constructor(cfiFrom?: string | Range | Node, base?: string | object, ignoreClass?: string);
+
+    isCfiString(str: string): boolean;
+
+    fromNode(anchor: Node, base: string | object, ignoreClass?: string): EpubCFI;
+
+    fromRange(range: Range, base: string | object, ignoreClass?: string): EpubCFI;
+
+    parse(cfiStr: string): EpubCFI;
+
+    collapse(toStart?: boolean): void;
+
+    compare(cfiOne: string | EpubCFI, cfiTwo: string | EpubCFI): number;
+
+    equalStep(stepA: object, stepB: object): boolean;
+
+    filter(anchor: Element, ignoreClass?: string): Element | false;
+
+    toRange(_doc?: Document, ignoreClass?: string): Range;
+
+    toString(): string;
+
+    private filteredStep(node: Node, ignoreClass?: string): any;
+
+    private findNode(steps: Array<EpubCFIStep>, _doc?: Document, ignoreClass?: string): Node;
+
+    private fixMiss(steps: Array<EpubCFIStep>, offset: number, _doc?: Document, ignoreClass?: string): any;
+
+    private checkType(cfi: string | Range | Node): string | false;
+
+    private generateChapterComponent(_spineNodeIndex: number, _pos: number, id: string): string;
+
+    private getChapterComponent(cfiStr: string): string;
+
+    private getCharecterOffsetComponent(cfiStr: string): string;
+
+    private getPathComponent(cfiStr: string): string;
+
+    private getRange(cfiStr: string): string;
+
+    private joinSteps(steps: Array<EpubCFIStep>): Array<EpubCFIStep>;
+
+    private normalizedMap(children: Array<Node>, nodeType: number, ignoreClass?: string): object;
+
+    private parseComponent(componentStr: string): object;
+
+    private parseStep(stepStr: string): object;
+
+    private parseTerminal(termialStr: string): object;
+
+    private patchOffset(anchor: Node, offset: number, ignoreClass?: string): number;
+
+    private pathTo(node: Node, offset: number, ignoreClass?: string): EpubCFISegment;
+
+    private position(anchor: Node): number;
+
+    private segmentString(segment: EpubCFISegment): string;
+
+    private step(node: Node): EpubCFIStep;
+
+    private stepsToQuerySelector(steps: Array<EpubCFIStep>): string;
+
+    private stepsToXpath(steps: Array<EpubCFIStep>): string;
+
+    private textNodes(container: Node, ignoreClass?: string): Array<Node>;
+
+    private walkToNode(steps: Array<EpubCFIStep>, _doc?: Document, ignoreClass?: string): Node;
 
 }
 
-export namespace Book {
-    namespace prototype {
-        function canonical(path: any): any;
+export class Layout {
+    constructor(settings: {
+      name?: string,
+      spread?: string,
+      minSpreadWidth?: number,
+      evenSpreads?: boolean,
+      flow?: string
+    });
 
-        function coverUrl(): any;
+    calculate(_width: number, _height: number, _gap: number): void;
 
-        function destroy(): void;
+    count(totalLength: number, pageLength: number): { spreads: number, pages: number };
 
-        function determineType(input: any): any;
+    flow(flow: string): string;
 
-        function emit(type: any, ...args: any[]): void;
+    format(contents: Contents): Promise<any>;
 
-        function getRange(cfiRange: any): any;
+    spread(spread: boolean, min: number): boolean;
 
-        function key(identifier: any): any;
+    // Event emitters
+    emit(type: any, ...args: any[]): void;
 
-        function load(path: any): any;
+    off(type: any, listener: any): any;
 
-        function loadNavigation(opf: any): any;
+    on(type: any, listener: any): any;
 
-        function off(type: any, listener: any): any;
-
-        function on(type: any, listener: any): any;
-
-        function once(type: any, listener: any, ...args: any[]): any;
-
-        function open(input: any, what: any): any;
-
-        function openContainer(url: any): any;
-
-        function openEpub(data: any, encoding: any): any;
-
-        function openManifest(url: any): any;
-
-        function openPackaging(url: any): any;
-
-        function renderTo(element: any, options: any): any;
-
-        function replacements(): any;
-
-        function resolve(path: any, absolute: any): any;
-
-        function section(target: any): any;
-
-        function setRequestCredentials(credentials: any): void;
-
-        function setRequestHeaders(headers: any): void;
-
-        function unarchive(input: any, encoding: any): any;
-
-        function unpack(opf: any): void;
-
-        namespace canonical {
-            const prototype: {
-            };
-
-        }
-
-        namespace coverUrl {
-            const prototype: {
-            };
-
-        }
-
-        namespace destroy {
-            const prototype: {
-            };
-
-        }
-
-        namespace determineType {
-            const prototype: {
-            };
-
-        }
-
-        namespace emit {
-            const prototype: {
-            };
-
-        }
-
-        namespace getRange {
-            const prototype: {
-            };
-
-        }
-
-        namespace key {
-            const prototype: {
-            };
-
-        }
-
-        namespace load {
-            const prototype: {
-            };
-
-        }
-
-        namespace loadNavigation {
-            const prototype: {
-            };
-
-        }
-
-        namespace off {
-            const prototype: {
-            };
-
-        }
-
-        namespace on {
-            const prototype: {
-            };
-
-        }
-
-        namespace once {
-            const prototype: {
-            };
-
-        }
-
-        namespace open {
-            const prototype: {
-            };
-
-        }
-
-        namespace openContainer {
-            const prototype: {
-            };
-
-        }
-
-        namespace openEpub {
-            const prototype: {
-            };
-
-        }
-
-        namespace openManifest {
-            const prototype: {
-            };
-
-        }
-
-        namespace openPackaging {
-            const prototype: {
-            };
-
-        }
-
-        namespace renderTo {
-            const prototype: {
-            };
-
-        }
-
-        namespace replacements {
-            const prototype: {
-            };
-
-        }
-
-        namespace resolve {
-            const prototype: {
-            };
-
-        }
-
-        namespace section {
-            const prototype: {
-            };
-
-        }
-
-        namespace setRequestCredentials {
-            const prototype: {
-            };
-
-        }
-
-        namespace setRequestHeaders {
-            const prototype: {
-            };
-
-        }
-
-        namespace unarchive {
-            const prototype: {
-            };
-
-        }
-
-        namespace unpack {
-            const prototype: {
-            };
-
-        }
-
-    }
+    once(type: any, listener: any, ...args: any[]): any;
 
 }
 
-export namespace Contents {
-    namespace prototype {
-        function addClass(className: any): void;
 
-        function addEventListeners(): void;
-
-        function addScript(src: any): any;
-
-        function addSelectionListeners(): void;
-
-        function addStylesheet(src: any): any;
-
-        function addStylesheetRules(rules: any): any;
-
-        function cfiFromNode(node: any, ignoreClass: any): any;
-
-        function cfiFromRange(range: any, ignoreClass: any): any;
-
-        function columns(width: any, height: any, columnWidth: any, gap: any): void;
-
-        function contentHeight(h: any): any;
-
-        function contentWidth(w: any): any;
-
-        function css(property: any, value: any, priority: any): any;
-
-        function destroy(): void;
-
-        function direction(dir: any): void;
-
-        function emit(type: any, ...args: any[]): void;
-
-        function epubReadingSystem(name: any, version: any): any;
-
-        function expand(): void;
-
-        function fit(width: any, height: any): void;
-
-        function fontLoadListeners(target: any): void;
-
-        function height(h: any): any;
-
-        function imageLoadListeners(target: any): void;
-
-        function layoutStyle(style: any): any;
-
-        function linksHandler(): void;
-
-        function listeners(): void;
-
-        function locationOf(target: any, ignoreClass: any): any;
-
-        function map(layout: any): any;
-
-        function mapPage(cfiBase: any, layout: any, start: any, end: any, dev: any): any;
-
-        function mediaQueryListeners(): void;
-
-        function off(type: any, listener: any): any;
-
-        function on(type: any, listener: any): any;
-
-        function onSelectionChange(e: any): void;
-
-        function once(type: any, listener: any, ...args: any[]): any;
-
-        function overflow(_overflow: any): any;
-
-        function overflowX(overflow: any): any;
-
-        function overflowY(overflow: any): any;
-
-        function range(_cfi: any, ignoreClass: any): any;
-
-        function removeClass(className: any): void;
-
-        function removeEventListeners(): void;
-
-        function removeListeners(): void;
-
-        function removeSelectionListeners(): void;
-
-        function resizeCheck(): void;
-
-        function resizeListeners(): void;
-
-        function resizeObservers(): void;
-
-        function root(): any;
-
-        function scaler(scale: any, offsetX: any, offsetY: any): void;
-
-        function scrollHeight(): any;
-
-        function scrollWidth(): any;
-
-        function size(width: any, height: any): void;
-
-        function textHeight(): any;
-
-        function textWidth(): any;
-
-        function transitionListeners(): void;
-
-        function triggerEvent(e: any): void;
-
-        function triggerSelectedEvent(selection: any): void;
-
-        function viewport(options: any): any;
-
-        function width(w: any): any;
-
-        function writingMode(mode: any): any;
-
-        namespace addClass {
-            const prototype: {
-            };
-
-        }
-
-        namespace addEventListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace addScript {
-            const prototype: {
-            };
-
-        }
-
-        namespace addSelectionListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace addStylesheet {
-            const prototype: {
-            };
-
-        }
-
-        namespace addStylesheetRules {
-            const prototype: {
-            };
-
-        }
-
-        namespace cfiFromNode {
-            const prototype: {
-            };
-
-        }
-
-        namespace cfiFromRange {
-            const prototype: {
-            };
-
-        }
-
-        namespace columns {
-            const prototype: {
-            };
-
-        }
-
-        namespace contentHeight {
-            const prototype: {
-            };
-
-        }
-
-        namespace contentWidth {
-            const prototype: {
-            };
-
-        }
-
-        namespace css {
-            const prototype: {
-            };
-
-        }
-
-        namespace destroy {
-            const prototype: {
-            };
-
-        }
-
-        namespace direction {
-            const prototype: {
-            };
-
-        }
-
-        namespace emit {
-            const prototype: {
-            };
-
-        }
-
-        namespace epubReadingSystem {
-            const prototype: {
-            };
-
-        }
-
-        namespace expand {
-            const prototype: {
-            };
-
-        }
-
-        namespace fit {
-            const prototype: {
-            };
-
-        }
-
-        namespace fontLoadListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace height {
-            const prototype: {
-            };
-
-        }
-
-        namespace imageLoadListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace layoutStyle {
-            const prototype: {
-            };
-
-        }
-
-        namespace linksHandler {
-            const prototype: {
-            };
-
-        }
-
-        namespace listeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace locationOf {
-            const prototype: {
-            };
-
-        }
-
-        namespace map {
-            const prototype: {
-            };
-
-        }
-
-        namespace mapPage {
-            const prototype: {
-            };
-
-        }
-
-        namespace mediaQueryListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace off {
-            const prototype: {
-            };
-
-        }
-
-        namespace on {
-            const prototype: {
-            };
-
-        }
-
-        namespace onSelectionChange {
-            const prototype: {
-            };
-
-        }
-
-        namespace once {
-            const prototype: {
-            };
-
-        }
-
-        namespace overflow {
-            const prototype: {
-            };
-
-        }
-
-        namespace overflowX {
-            const prototype: {
-            };
-
-        }
-
-        namespace overflowY {
-            const prototype: {
-            };
-
-        }
-
-        namespace range {
-            const prototype: {
-            };
-
-        }
-
-        namespace removeClass {
-            const prototype: {
-            };
-
-        }
-
-        namespace removeEventListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace removeListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace removeSelectionListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace resizeCheck {
-            const prototype: {
-            };
-
-        }
-
-        namespace resizeListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace resizeObservers {
-            const prototype: {
-            };
-
-        }
-
-        namespace root {
-            const prototype: {
-            };
-
-        }
-
-        namespace scaler {
-            const prototype: {
-            };
-
-        }
-
-        namespace scrollHeight {
-            const prototype: {
-            };
-
-        }
-
-        namespace scrollWidth {
-            const prototype: {
-            };
-
-        }
-
-        namespace size {
-            const prototype: {
-            };
-
-        }
-
-        namespace textHeight {
-            const prototype: {
-            };
-
-        }
-
-        namespace textWidth {
-            const prototype: {
-            };
-
-        }
-
-        namespace transitionListeners {
-            const prototype: {
-            };
-
-        }
-
-        namespace triggerEvent {
-            const prototype: {
-            };
-
-        }
-
-        namespace triggerSelectedEvent {
-            const prototype: {
-            };
-
-        }
-
-        namespace viewport {
-            const prototype: {
-            };
-
-        }
-
-        namespace width {
-            const prototype: {
-            };
-
-        }
-
-        namespace writingMode {
-            const prototype: {
-            };
-
-        }
-
-    }
-
-}
-
-export namespace EpubCFI {
-    namespace prototype {
-        function checkType(cfi: any): any;
-
-        function collapse(toStart: any): void;
-
-        function compare(cfiOne: any, cfiTwo: any): any;
-
-        function equalStep(stepA: any, stepB: any): any;
-
-        function filter(anchor: any, ignoreClass: any): any;
-
-        function filteredPosition(anchor: any, ignoreClass: any): any;
-
-        function filteredStep(node: any, ignoreClass: any): any;
-
-        function findNode(steps: any, _doc: any, ignoreClass: any): any;
-
-        function fixMiss(steps: any, offset: any, _doc: any, ignoreClass: any): any;
-
-        function fromNode(anchor: any, base: any, ignoreClass: any): any;
-
-        function fromRange(range: any, base: any, ignoreClass: any): any;
-
-        function generateChapterComponent(_spineNodeIndex: any, _pos: any, id: any): any;
-
-        function getChapterComponent(cfiStr: any): any;
-
-        function getCharecterOffsetComponent(cfiStr: any): any;
-
-        function getPathComponent(cfiStr: any): any;
-
-        function getRange(cfiStr: any): any;
-
-        function isCfiString(str: any): any;
-
-        function joinSteps(steps: any): any;
-
-        function normalizedMap(children: any, nodeType: any, ignoreClass: any): any;
-
-        function parse(cfiStr: any): any;
-
-        function parseComponent(componentStr: any): any;
-
-        function parseStep(stepStr: any): any;
-
-        function parseTerminal(termialStr: any): any;
-
-        function patchOffset(anchor: any, offset: any, ignoreClass: any): any;
-
-        function pathTo(node: any, offset: any, ignoreClass: any): any;
-
-        function position(anchor: any): any;
-
-        function segmentString(segment: any): any;
-
-        function step(node: any): any;
-
-        function stepsToQuerySelector(steps: any): any;
-
-        function stepsToXpath(steps: any): any;
-
-        function textNodes(container: any, ignoreClass: any): any;
-
-        function toRange(_doc: any, ignoreClass: any): any;
-
-        function toString(): any;
-
-        function walkToNode(steps: any, _doc: any, ignoreClass: any): any;
-
-        namespace checkType {
-            const prototype: {
-            };
-
-        }
-
-        namespace collapse {
-            const prototype: {
-            };
-
-        }
-
-        namespace compare {
-            const prototype: {
-            };
-
-        }
-
-        namespace equalStep {
-            const prototype: {
-            };
-
-        }
-
-        namespace filter {
-            const prototype: {
-            };
-
-        }
-
-        namespace filteredPosition {
-            const prototype: {
-            };
-
-        }
-
-        namespace filteredStep {
-            const prototype: {
-            };
-
-        }
-
-        namespace findNode {
-            const prototype: {
-            };
-
-        }
-
-        namespace fixMiss {
-            const prototype: {
-            };
-
-        }
-
-        namespace fromNode {
-            const prototype: {
-            };
-
-        }
-
-        namespace fromRange {
-            const prototype: {
-            };
-
-        }
-
-        namespace generateChapterComponent {
-            const prototype: {
-            };
-
-        }
-
-        namespace getChapterComponent {
-            const prototype: {
-            };
-
-        }
-
-        namespace getCharecterOffsetComponent {
-            const prototype: {
-            };
-
-        }
-
-        namespace getPathComponent {
-            const prototype: {
-            };
-
-        }
-
-        namespace getRange {
-            const prototype: {
-            };
-
-        }
-
-        namespace isCfiString {
-            const prototype: {
-            };
-
-        }
-
-        namespace joinSteps {
-            const prototype: {
-            };
-
-        }
-
-        namespace normalizedMap {
-            const prototype: {
-            };
-
-        }
-
-        namespace parse {
-            const prototype: {
-            };
-
-        }
-
-        namespace parseComponent {
-            const prototype: {
-            };
-
-        }
-
-        namespace parseStep {
-            const prototype: {
-            };
-
-        }
-
-        namespace parseTerminal {
-            const prototype: {
-            };
-
-        }
-
-        namespace patchOffset {
-            const prototype: {
-            };
-
-        }
-
-        namespace pathTo {
-            const prototype: {
-            };
-
-        }
-
-        namespace position {
-            const prototype: {
-            };
-
-        }
-
-        namespace segmentString {
-            const prototype: {
-            };
-
-        }
-
-        namespace step {
-            const prototype: {
-            };
-
-        }
-
-        namespace stepsToQuerySelector {
-            const prototype: {
-            };
-
-        }
-
-        namespace stepsToXpath {
-            const prototype: {
-            };
-
-        }
-
-        namespace textNodes {
-            const prototype: {
-            };
-
-        }
-
-        namespace toRange {
-            const prototype: {
-            };
-
-        }
-
-        namespace toString {
-            const prototype: {
-            };
-
-        }
-
-        namespace walkToNode {
-            const prototype: {
-            };
-
-        }
-
-    }
-
-}
-
-export namespace Layout {
-    namespace prototype {
-        function calculate(_width: any, _height: any, _gap: any): void;
-
-        function count(totalLength: any, pageLength: any): any;
-
-        function emit(type: any, ...args: any[]): void;
-
-        function flow(_flow: any): any;
-
-        function format(contents: any): any;
-
-        function off(type: any, listener: any): any;
-
-        function on(type: any, listener: any): any;
-
-        function once(type: any, listener: any, ...args: any[]): any;
-
-        function spread(_spread: any, min: any): any;
-
-        function update(props: any): void;
-
-        namespace calculate {
-            const prototype: {
-            };
-
-        }
-
-        namespace count {
-            const prototype: {
-            };
-
-        }
-
-        namespace emit {
-            const prototype: {
-            };
-
-        }
-
-        namespace flow {
-            const prototype: {
-            };
-
-        }
-
-        namespace format {
-            const prototype: {
-            };
-
-        }
-
-        namespace off {
-            const prototype: {
-            };
-
-        }
-
-        namespace on {
-            const prototype: {
-            };
-
-        }
-
-        namespace once {
-            const prototype: {
-            };
-
-        }
-
-        namespace spread {
-            const prototype: {
-            };
-
-        }
-
-        namespace update {
-            const prototype: {
-            };
-
-        }
-
-    }
-
-}
-
-export namespace Rendition {
-    namespace prototype {
-        function adjustImages(contents: any): any;
-
-        function afterDisplayed(view: any): any;
-
-        function afterRemoved(view: any): void;
-
-        function attachTo(element: any): any;
-
-        function clear(): void;
-
-        function currentLocation(): any;
-
-        function destroy(): void;
-
-        function determineLayoutProperties(metadata: any): any;
-
-        function direction(dir: any): void;
-
-        function display(target: any): any;
-
-        function emit(type: any, ...args: any[]): void;
-
-        function flow(_flow2: any): void;
-
-        function getContents(): any;
-
-        function getRange(cfi: any, ignoreClass: any): any;
-
-        function handleLinks(contents: any): void;
-
-        function injectIdentifier(doc: any, section: any): void;
-
-        function injectScript(doc: any, section: any): void;
-
-        function injectStylesheet(doc: any, section: any): void;
-
-        function layout(settings: any): any;
-
-        function located(location: any): any;
-
-        function moveTo(offset: any): void;
-
-        function next(): any;
-
-        function off(type: any, listener: any): any;
-
-        function on(type: any, listener: any): any;
-
-        function onOrientationChange(orientation: any): void;
-
-        function onResized(size: any): void;
-
-        function once(type: any, listener: any, ...args: any[]): any;
-
-        function passEvents(contents: any): any;
-
-        function prev(): any;
-
-        function reportLocation(): any;
-
-        function requireManager(manager: any): any;
-
-        function requireView(view: any): any;
-
-        function resize(width: any, height: any): void;
-
-        function setManager(manager: any): void;
-
-        function spread(_spread: any, min: any): void;
-
-        function start(): void;
-
-        function triggerMarkEvent(cfiRange: any, data: any, contents: any): void;
-
-        function triggerSelectedEvent(cfirange: any, contents: any): void;
-
-        function triggerViewEvent(e: any, contents: any): void;
-
-        function views(): any;
-
-        namespace adjustImages {
-            const prototype: {
-            };
-
-        }
-
-        namespace afterDisplayed {
-            const prototype: {
-            };
-
-        }
-
-        namespace afterRemoved {
-            const prototype: {
-            };
-
-        }
-
-        namespace attachTo {
-            const prototype: {
-            };
-
-        }
-
-        namespace clear {
-            const prototype: {
-            };
-
-        }
-
-        namespace currentLocation {
-            const prototype: {
-            };
-
-        }
-
-        namespace destroy {
-            const prototype: {
-            };
-
-        }
-
-        namespace determineLayoutProperties {
-            const prototype: {
-            };
-
-        }
-
-        namespace direction {
-            const prototype: {
-            };
-
-        }
-
-        namespace display {
-            const prototype: {
-            };
-
-        }
-
-        namespace emit {
-            const prototype: {
-            };
-
-        }
-
-        namespace flow {
-            const prototype: {
-            };
-
-        }
-
-        namespace getContents {
-            const prototype: {
-            };
-
-        }
-
-        namespace getRange {
-            const prototype: {
-            };
-
-        }
-
-        namespace handleLinks {
-            const prototype: {
-            };
-
-        }
-
-        namespace injectIdentifier {
-            const prototype: {
-            };
-
-        }
-
-        namespace injectScript {
-            const prototype: {
-            };
-
-        }
-
-        namespace injectStylesheet {
-            const prototype: {
-            };
-
-        }
-
-        namespace layout {
-            const prototype: {
-            };
-
-        }
-
-        namespace located {
-            const prototype: {
-            };
-
-        }
-
-        namespace moveTo {
-            const prototype: {
-            };
-
-        }
-
-        namespace next {
-            const prototype: {
-            };
-
-        }
-
-        namespace off {
-            const prototype: {
-            };
-
-        }
-
-        namespace on {
-            const prototype: {
-            };
-
-        }
-
-        namespace onOrientationChange {
-            const prototype: {
-            };
-
-        }
-
-        namespace onResized {
-            const prototype: {
-            };
-
-        }
-
-        namespace once {
-            const prototype: {
-            };
-
-        }
-
-        namespace passEvents {
-            const prototype: {
-            };
-
-        }
-
-        namespace prev {
-            const prototype: {
-            };
-
-        }
-
-        namespace reportLocation {
-            const prototype: {
-            };
-
-        }
-
-        namespace requireManager {
-            const prototype: {
-            };
-
-        }
-
-        namespace requireView {
-            const prototype: {
-            };
-
-        }
-
-        namespace resize {
-            const prototype: {
-            };
-
-        }
-
-        namespace setManager {
-            const prototype: {
-            };
-
-        }
-
-        namespace spread {
-            const prototype: {
-            };
-
-        }
-
-        namespace start {
-            const prototype: {
-            };
-
-        }
-
-        namespace triggerMarkEvent {
-            const prototype: {
-            };
-
-        }
-
-        namespace triggerSelectedEvent {
-            const prototype: {
-            };
-
-        }
-
-        namespace triggerViewEvent {
-            const prototype: {
-            };
-
-        }
-
-        namespace views {
-            const prototype: {
-            };
-
-        }
-
-    }
-
-}
