@@ -26,10 +26,6 @@ interface RenditionOptions {
   script?: string
 }
 
-interface Location {
-
-}
-
 interface DisplayedLocation {
   index: number,
   href: string,
@@ -40,9 +36,11 @@ interface DisplayedLocation {
   }
 }
 
-interface DisplayedLocationRange {
+interface Location {
   start: DisplayedLocation,
-	end: DisplayedLocation
+	end: DisplayedLocation,
+  atStart: boolean,
+  atEnd: boolean
 }
 
 interface ViewportSettings {
@@ -67,6 +65,10 @@ interface EpubCFIStep {
 	tagName: string,
 	type: number,
 	index: number
+}
+
+interface HooksObject {
+  [key: string]: Hook
 }
 
 export as namespace ePub;
@@ -443,4 +445,488 @@ export class Layout {
 
 }
 
+export class Annotations {
+  constructor(rendition: Rendition);
 
+  add(type: string, cfiRange: string, data?: object, cb?: Function, className?: string, styles?: object): Annotation;
+
+  remove(cfiRange: string, type: string): void;
+
+  highlight(cfiRange: string, data?: object, cb?: Function, className?: string, styles?: object): void;
+
+	underline(cfiRange: string, data?: object, cb?: Function, className?: string, styles?: object): void;
+
+	mark(cfiRange: string, data?: object, cb?: Function): void;
+
+  each(): Array<Annotation>
+
+  private _removeFromAnnotationBySectionIndex(sectionIndex: number, hash: string): void;
+
+  private _annotationsAt(index: number): void;
+
+  private inject(view: View): void;
+
+  private clear(view: View): void;
+}
+
+export class Annotation {
+  constructor(options: {
+		type: string,
+		cfiRange: string,
+		data?: object,
+		sectionIndex?: number,
+		cb?: Function,
+		className?: string,
+		styles?: object
+	});
+
+  update(data: object): void;
+
+  attach(view: View): any;
+
+  detach(view: View): any;
+
+  // Event emitters
+  emit(type: any, ...args: any[]): void;
+
+  off(type: any, listener: any): any;
+
+  on(type: any, listener: any): any;
+
+  once(type: any, listener: any, ...args: any[]): any;
+}
+
+export class Container {
+  constructor(containerDocument: Document);
+
+  parse(containerDocument: Document): void;
+
+  destroy(): void;
+}
+
+export class Locations {
+  constructor(spine: Spine, request?: Function, pause?: number);
+
+  generate(chars: number): object;
+
+  process(section: Section): Promise<Array<string>>;
+
+	locationFromCfi(cfi: string | EpubCFI): Location;
+
+	percentageFromCfi(cfi: string | EpubCFI): number;
+
+  percentageFromLocation(loc: number): number;
+
+  cfiFromLocation(loc: number): string;
+
+  cfiFromPercentage(percentage: number): string;
+
+	load(locations: JSON): Array<string>;
+
+  save(): JSON;
+
+  currentLocation(): Location;
+  currentLocation(curr: string | number): void;
+
+  length(): number;
+
+  destroy(): void;
+
+  private createRange(): {
+    startContainer: Element,
+    startOffset: number,
+    endContainer: Element,
+    endOffset: number
+  };
+
+  private parse(contents: Node, cfiBase: string, chars: number) : Array<string>;
+}
+
+interface EpubCFIPair {
+  start: string,
+  end: string
+}
+
+interface RangePair {
+  start: Range,
+  end: Range
+}
+
+export class Mapping {
+  constructor(layout: Layout, direction?: string, axis?: string, dev?: boolean);
+
+  page(contents: Contents, cfiBase: string, start: number, end: number): EpubCFIPair;
+
+  axis(axis: string): boolean;
+
+  private walk(root: Node, func: Function);
+
+  private findStart(root: Node, start: number, end: number): Range;
+
+  private findEnd(root: Node, start: number, end: number): Range;
+
+  private findTextStartRange(node: Node, start: number, end: number): Range;
+
+  private findTextEndRange(node: Node, start: number, end: number): Range;
+
+  private splitTextNodeIntoRanges(node: Node, _splitter?: string): Array<Range>;
+
+  private rangePairToCfiPair(cfiBase: string, rangePair: RangePair): EpubCFIPair;
+}
+
+export interface NavItem {
+  id?: string,
+  href?: string,
+  label?: string,
+  subitems?: Array<NavItem>,
+  parent?: NavItem
+}
+
+export interface LandmarkItem {
+  href?: string,
+  label?: string,
+  type?: string
+}
+
+export class Navigation {
+  constructor(xml: XMLDocument);
+
+  parse(xml: XMLDocument): void;
+
+  get(target: string) : NavItem;
+
+  landmark(type: string) : LandmarkItem;
+
+  load(json: JSON): Array<NavItem>;
+
+  forEach(fn: (item: NavItem) => {}): any;
+
+  private unpack(toc: Array<NavItem>): void;
+
+  private parseNav(navHtml: XMLDocument): Array<NavItem>;
+
+  private navItem(item: Element): NavItem;
+
+  private parseLandmarks(navHtml: XMLDocument): Array<LandmarkItem>;
+
+  private landmarkItem(item: Element): LandmarkItem;
+
+  private parseNcx(navHtml: XMLDocument): Array<NavItem>;
+
+  private ncxItem(item: Element): NavItem;
+}
+
+export interface PackagingObject {
+  metadata: MetadataObject,
+  spine: SpineArray,
+  manifest: ManifestObject,
+  navPath: string,
+  ncxPath: string,
+  coverPath: string,
+  spineNodeIndex: number
+}
+
+export interface PackagingMetadataObject {
+  title: string,
+  creator: string,
+  description: string,
+  pubdate: string,
+  publisher: string,
+  identifier: string,
+  language: string,
+  rights: string,
+  modified_date: string,
+  layout: string,
+  orientation: string,
+  flow: string,
+  viewport: string
+}
+
+export interface PackagingSpineItem {
+  idref: string,
+  properties: Array<string>,
+  index: number
+}
+
+export interface PackagingManifestItem {
+  href: string,
+  type: string,
+  properties: Array<string>
+}
+
+export interface PackagingManifestObject {
+  [key: string]: PackagingManifestItem
+}
+
+export class Packaging {
+  constructor(packageDocument: XMLDocument);
+
+  parse(packageDocument: XMLDocument): PackagingObject;
+
+  load(json: JSON): PackagingObject;
+
+  destroy(): void;
+
+  private parseMetadata(xml: Node): PackagingMetadataObject;
+
+  private parseManifest(xml: Node): PackagingManifestObject;
+
+  private parseSpine(xml: Node, manifest: PackagingManifestObject): Array<PackagingSpineItem>;
+
+  private findNavPath(manifestNode: Node): string | false;
+
+  private findNcxPath(manifestNode: Node, spineNode: Node): string | false;
+
+  private findCoverPath(packageXml: Node): string;
+
+  private getElementText(xml: Node, tag: string): string
+
+  private getPropertyText(xml: Node, property: string): string
+}
+
+
+export interface PageListItem {
+  href: string,
+  page: string,
+  cfi?: string,
+  packageUrl?: string
+}
+
+export class Pagelist {
+  constructor(xml: XMLDocument);
+
+  parse(xml: XMLDocument): Array<PageListItem>;
+
+  pageFromCfi(cfi: string): number;
+
+  cfiFromPage(pg: string | number): string;
+
+  pageFromPercentage(percent: number): number;
+
+  percentageFromPage(pg: number): number;
+
+  destroy(): void;
+
+  private parseNav(navHtml: Node): Array<PageListItem>;
+
+  private item(item: Node): PageListItem;
+
+  private process(pageList: Array<PageListItem>): void;
+
+}
+
+export class Resources {
+  constructor(manifest: PackagingManifestObject, options: {
+    replacements?: string,
+    archive?: Archive,
+    resolver?: Function,
+    request?: Function
+  });
+
+  createUrl(url: string): Promise<string>;
+
+  replacements(): Promise<Array<string>>;
+
+  relativeTo(absolute: boolean, resolver?: Function): Array<string>;
+
+  get(path: string): string;
+
+  substitute(content: string, url?: string): string;
+
+  destroy(): void;
+
+  private split(): void;
+
+  private splitUrls(): void;
+
+  private replaceCss(archive: Archive, resolver?: Function): Promise<Array<string>>;
+
+  private createCssFile(href: string): Promise<string>;
+}
+
+export interface GlobalLayout {
+  layout: string,
+  spread: string,
+  orientation: string
+}
+
+export interface LayoutSettings {
+  layout: string,
+  spread: string,
+  orientation: string
+}
+
+export class Section {
+  constructor(item: SpineItem, hooks: HooksObject);
+
+  load(_request?: Function): Document;
+
+  render(_request?: Function): string;
+
+  find(_query: string): Array<Element>;
+
+  reconcileLayoutSettings(globalLayout: GlobalLayout): LayoutSettings;
+
+  cfiFromRange(_range: Range): string;
+
+  cfiFromElement(el: Element): string;
+
+  unload(): void;
+
+  destroy(): void;
+
+  private base(): void;
+}
+
+export interface SpineItem {
+  index: number,
+  cfiBase: string,
+  href?: string,
+  url?: string,
+  canonical?: string,
+  properties?: Array<string>,
+  linear?: string,
+  next: () => SpineItem,
+  prev: () => SpineItem,
+}
+
+export class Spine {
+  constructor();
+
+  unpack(_package: Packaging, resolver: Function, canonical: Function): void;
+
+  get(target?: string | number): Section;
+
+  each(...args: any[]): any;
+
+  first(): Section;
+
+  last(): Section;
+
+  destroy(): void;
+
+  private append(section: Section): number;
+
+  private prepend(section: Section): number;
+
+  private remove(section: Section): number;
+}
+
+export class Themes {
+  constructor(rendition: Rendition);
+
+   register( themeObject: object ): void;
+
+   register( theme: string, url: string ): void;
+
+   register( theme: string, themeObject: object ): void;
+
+   default( theme: object | string ): void;
+
+   registerThemes( themes: object ): void;
+
+   registerUrl( name: string, input: string ): void;
+
+   registerRules( name: string, rules: object ): void;
+
+   select( name: string ): void;
+
+   update( name: string ): void;
+
+   inject( content: Contents ): void;
+
+   add( name: string, contents: Contents ): void;
+
+   override(name: string, value: string, priority: boolean): void;
+
+   overrides(contents: Contents): void;
+
+   fontSize(size: string): void;
+
+   font(f: string): void;
+
+   destroy(): void;
+}
+
+export namespace Core {
+  export function uuid(): string;
+
+  export function documentHeight(): number;
+
+  export function isElement(obj): boolean;
+
+  export function isNumber(n: any): boolean;
+
+  export function isFloat(n: any): boolean;
+
+  export function prefixed(unprefixed: string): string;
+
+  export function defaults(obj: object): object;
+
+  export function extend(target: object): object;
+
+  export function insert(item: any, array: Array<any>, compareFunction: Function): number;
+
+  export function locationOf(item: any, array: Array<any>, compareFunction: Function, _start: Function, _end: Function): number;
+
+  export function indexOfSorted(item: any, array: Array<any>, compareFunction: Function, _start: Function, _end: Function): number;
+
+  export function bounds(el: Element): { width: Number, height: Number};
+
+  export function borders(el: Element): { width: Number, height: Number};
+
+  export function nodeBounds(node: Node): object;
+
+  export function windowBounds(): { width: Number, height: Number, top: Number, left: Number, right: Number, bottom: Number };
+
+  export function indexOfNode(node: Node, typeId: string): number;
+
+  export function indexOfTextNode(textNode: Node): number;
+
+  export function indexOfElementNode(elementNode: Element): number;
+
+  export function isXml(ext: string): boolean;
+
+  export function createBlob(content: any, mime: string): Blob;
+
+  export function createBlobUrl(content: any, mime: string): string;
+
+  export function revokeBlobUrl(url: string): void;
+
+  export function createBase64Url(content: any, mime: string): string
+
+  export function type(obj: object): string;
+
+  export function parse(markup: string, mime: string, forceXMLDom: boolean): Document;
+
+  export function qs(el: Element, sel: string): Element;
+
+  export function qsa(el: Element, sel: string): ArrayLike<Element>;
+
+  export function qsp(el: Element, sel: string, props: Array<object>): ArrayLike<Element>;
+
+  export function sprint(root: Node, func: Function): void;
+
+  export function treeWalker(root: Node, func: Function, filter: object | Function): void;
+
+  export function walk(node: Node, callback: Function): void;
+
+  export function blob2base64(blob: Blob): string;
+
+  export function defer(): Promise<any>;
+
+  export function querySelectorByType(html: Element, element: string, type: string): Array<Element>;
+
+  export function findChildren(el: Element): Array<Element>;
+
+  export function parents(node: Element): Array<Element>;
+
+  export function filterChildren(el: Element, nodeName: string, single: boolean): Array<Element>;
+
+  export function getParentByTagName(node: Element, tagname: string): Array<Element>;
+
+  export class RangeObject extends Range {
+
+  }
+
+}
