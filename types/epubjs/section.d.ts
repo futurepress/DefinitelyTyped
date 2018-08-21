@@ -27,6 +27,23 @@ export interface SpineItem {
 export default class Section {
   constructor(item: SpineItem, hooks: HooksObject);
 
+  idref: string;
+  linear: string;
+  properties: Array<string>;
+  index: number;
+  href: string;
+  url: string;
+  canonical: string;
+  next: () => SpineItem;
+  prev: () => SpineItem;
+  cfiBase: string;
+
+  document: Document;
+  contents: Element;
+  output: string;
+
+  hooks: HooksObject;
+
   load(_request?: Function): Document;
 
   render(_request?: Function): string;

@@ -10,6 +10,21 @@ interface LayoutSettings {
 export default class Layout {
   constructor(settings: LayoutSettings);
 
+  settings: LayoutSettings;
+  name: string;
+  props: {
+    name: string,
+    spread: string,
+    flow: string,
+    width: number,
+    height: number,
+    spreadWidth: number,
+    delta: number,
+    columnWidth: number,
+    gap: number,
+    divisor: number
+  };
+
   flow(flow: string): string;
 
   spread(spread: string, min: number): boolean;
