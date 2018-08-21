@@ -12,6 +12,14 @@ export interface ViewportSettings {
 export default class Contents {
     constructor(doc: Document, content: Element, cfiBase: string, sectionIndex: number);
 
+    epubcfi: EpubCFI;
+    document: Document;
+    documentElement: Element;
+    content: Element;
+    window: Window;
+    sectionIndex: number;
+    cfiBase: string;
+
     static listenedEvents: string[];
 
     addClass(className: string): void;

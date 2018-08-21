@@ -7,7 +7,7 @@ export interface QueuedTask {
   promise: Promise<any>
 }
 
-export class Queue {
+export default class Queue {
   constructor(context: any);
 
   enqueue(func: Promise<Function> | Function, ...args: any[]): Promise<any>;

@@ -1,8 +1,21 @@
+import {
+  PackagingManifestObject,
+  PackagingMetadataObject,
+  PackagingSpineItem,
+  PackagingObject
+} from "./packaging";
 import Rendition, { RenditionOptions } from "./rendition";
-import Section from "./section";
+import Section, { SpineItem } from "./section";
 import Archive from "./archive";
 import Navigation from "./navigation";
-
+import PageList, {PageListItem} from "./pagelist";
+import Spine from "./spine";
+import Locations from "./locations";
+import Url from "./utils/url";
+import Path from "./utils/path";
+import Resources from "./resources";
+import Container from "./container";
+import Packaging from "./packaging";
 export interface BookOptions {
   requestMethod?: (url: string, type: string, withCredentials: object, headers: object) => Promise<object>;
   requestCredentials?: object,
@@ -16,6 +29,35 @@ export interface BookOptions {
 export default class Book {
     constructor(url: string, options?: BookOptions);
     constructor(options?: BookOptions);
+
+    settings: BookOptions;
+    opening: any; // should be core.defer
+    opened: Promise<void>
+    isOpen: boolean;
+    loaded: {
+      metadata: Promise<PackagingMetadataObject>,
+      spine: Promise<SpineItem[]>,
+      manifest: Promise<PackagingManifestObject>,
+      cover: Promise<string>,
+      navigation: Promise<Navigation>,
+      pageList: Promise<PageListItem[]>,
+      resources: Promise<string[]>,
+    }
+    ready: Promise<void>;
+    request: Function;
+    spine: Spine;
+    locations: Locations;
+    navigation: Navigation;
+    pageList: PageList;
+    url: Url;
+    path: Path;
+    archived: boolean;
+    archive: Archive;
+    resources: Resources;
+    rendition: Rendition
+    container: Container;
+    packaging: Packaging;
+
 
     canonical(path: string): string;
 

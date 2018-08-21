@@ -2,6 +2,11 @@ import Book from "./book";
 import Contents from "./contents";
 import Section from "./section";
 import View from "./managers/view";
+import Hook from "./utils/hook";
+import Themes from "./themes";
+import EpubCFI from "./epubcfi";
+import Annotations from "./annotations";
+import Queue from "./utils/queue";
 
 export interface RenditionOptions {
   width?: number,
@@ -35,6 +40,24 @@ export interface Location {
 
 export default class Rendition {
     constructor(book: Book, options: RenditionOptions);
+
+    settings: RenditionOptions;
+    book: Book;
+    hooks: {
+      display: Hook,
+      serialize: Hook,
+      content: Hook,
+      unloaded: Hook,
+      layout: Hook,
+      render: Hook,
+      show: Hook
+    }
+    themes: Themes;
+    annotations: Annotations;
+    epubcfi: EpubCFI;
+    q: Queue;
+    location: Location;
+    started: Promise<void>;
 
     adjustImages(contents: Contents): Promise<void>;
 
